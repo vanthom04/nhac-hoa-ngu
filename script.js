@@ -142,7 +142,7 @@ let allMusic = [
   {
     name: "Người Theo Đuổi Ánh Sáng",
     artist: "Từ Vi",
-    img: "img/music/.jpg",
+    img: "img/music/nguoi_theo_duoi_anh_sang.jpg",
     src: "music/nguoi_theo_duoi_anh_sang.mp3",
     idMusic: "song21",
   },
@@ -217,24 +217,24 @@ let allMusic = [
     idMusic: "song31",
   },
   //   {
-  //     name: "",
+  //     name: "Một Đường Nở Hoa",
   //     artist: "",
-  //     img: "img/music/.jpg",
-  //     src: "music/.mp3",
+  //     img: "img/music/mot_duong_no_hoa.jpg",
+  //     src: "music/mot_duong_no_hoa.mp3",
   //     idMusic: "song32",
   //   },
   //   {
-  //     name: "",
+  //     name: "Mashup",
   //     artist: "",
-  //     img: "img/music/.jpg",
-  //     src: "music/.mp3",
+  //     img: "img/music/mashup_1.jpg",
+  //     src: "music/mashup_1.mp3",
   //     idMusic: "song33",
   //   },
   //   {
-  //     name: "",
-  //     artist: "",
-  //     img: "img/music/.jpg",
-  //     src: "music/.mp3",
+  //     name: "Nửa Đời Tuyết",
+  //     artist: "Tương Tuyết Nhi",
+  //     img: "img/music/nua_doi_tuyet.jpg",
+  //     src: "music/nua_doi_tuyet.mp3",
   //     idMusic: "song34",
   //   },
   //   {
@@ -542,10 +542,12 @@ const playbackTimeBtn = document.querySelector("#btn-playback-time");
 const songAudio = document.createElement("audio");
 
 let currentIndex = 0;
-let timer = 0;
 let isPlaying = false;
 let isRandom = false;
 let isRepeat = false;
+let isPlaybackTime = false;
+let stopMusic = null;
+let stopTime = 3600000;
 
 window.addEventListener("load", () => {
   loadMusic(currentIndex);
@@ -556,19 +558,19 @@ window.addEventListener("load", () => {
 for (let i = 0; i < allMusic.length; i++) {
   let song = `<div class="song" musicIndex="${i}">
                 <div class="left">
-                    <div
+                  <div
                     class="img-song"
-                    style="background-image: url('${allMusic[i].img}')"
-                    ></div>
-                    <div class="music-name">
+                    style="background-image: url('${allMusic[i].img}')">
+                  </div>
+                  <div class="song-title">
                     <h3 class="name">${allMusic[i].name}</h3>
                     <p class="artist">${allMusic[i].artist}</p>
-                    </div>
+                  </div>
                 </div>
                 <audio class="${allMusic[i].idMusic}" src="${allMusic[i].src}">
                 </audio>
                 <div id="${allMusic[i].idMusic}" class="audio-duration">
-                    <i class="fas fa-ellipsis-h"></i>
+                  <i class="fas fa-ellipsis-h"></i>
                 </div>
                 </div>`;
   playlist.insertAdjacentHTML("beforeend", song);
@@ -604,7 +606,7 @@ function clicked(index) {
   let getSongIndex = index.getAttribute("musicindex");
   currentIndex = getSongIndex;
   loadMusic(currentIndex);
-  playsong();
+  playSong();
   playSongMusic();
 }
 // Load Music
@@ -638,19 +640,19 @@ cdThumbAnimation.pause();
 // Play song
 function musicPlay() {
   if (isPlaying) {
-    pausesong();
+    pauseSong();
   } else {
-    playsong();
+    playSong();
   }
 }
-function playsong() {
+function playSong() {
   songAudio.play();
   cdThumbAnimation.play();
   isPlaying = true;
   playBtn.innerHTML = '<i class="fa-solid fa-pause"></i>';
 }
 
-function pausesong() {
+function pauseSong() {
   songAudio.pause();
   cdThumbAnimation.pause();
   isPlaying = false;
@@ -663,12 +665,12 @@ function nextSong() {
     currentIndex++;
     loadMusic(currentIndex);
     playSongMusic();
-    playsong();
+    playSong();
   } else {
     currentIndex = 0;
     loadMusic(currentIndex);
     playSongMusic();
-    playsong();
+    playSong();
   }
 }
 nextBtn.onclick = function () {
@@ -686,12 +688,12 @@ function prevSong() {
     currentIndex--;
     loadMusic(currentIndex);
     playSongMusic();
-    playsong();
+    playSong();
   } else {
     currentIndex = allMusic.length - 1;
     loadMusic(currentIndex);
     playSongMusic();
-    playsong();
+    playSong();
   }
 }
 prevBtn.onclick = function () {
@@ -719,18 +721,45 @@ randomBtn.onclick = function (e) {
   randomBtn.classList.toggle("pink", isRandom);
 };
 
+let playedSongs = [];
 function playRandomSong() {
-  let newCurrentIndex;
-  let beforCurrentIndex;
+  let randomIndex;
+  let randomSong;
+
+  // Lặp lại cho đến khi tìm được bài hát không trùng lặp
   do {
-    newCurrentIndex = Math.floor(Math.random() * allMusic.length);
-  } while (
-    newCurrentIndex == currentIndex ||
-    newCurrentIndex == beforCurrentIndex
-  );
-  beforCurrentIndex = newCurrentIndex;
-  currentIndex = newCurrentIndex;
+    randomIndex = Math.floor(Math.random() * allMusic.length);
+    randomSong = allMusic[randomIndex];
+  } while (playedSongs.includes(randomSong));
+
+  // Thêm bài hát được random vào danh sách các bài đã được phát
+  playedSongs.push(randomSong);
+
+  // Nếu tất cả bài hát đã được phát thì reset lại danh sách
+  if (playedSongs.length == allMusic.length) {
+    playedSongs = [];
+  }
+
+  // Trả về bài hát được random
+  currentIndex = randomIndex;
 }
+
+// Playback time
+playbackTimeBtn.addEventListener("click", function () {
+  if (!isPlaybackTime) {
+    playbackTimeBtn.classList.add("pink");
+    stopMusic = setTimeout(function () {
+      isPlaybackTime = false;
+      pauseSong();
+    }, stopTime);
+    isPlaybackTime = true;
+  } else {
+    clearTimeout(stopMusic);
+    playbackTimeBtn.classList.remove("pink");
+    isPlaybackTime = false;
+    playSong();
+  }
+});
 
 // progress
 songAudio.addEventListener("timeupdate", (e) => {
@@ -764,5 +793,5 @@ progress.addEventListener("click", (e) => {
   let clickOffsetX = e.offsetX;
   let songDuration = songAudio.duration;
   songAudio.currentTime = (clickOffsetX / progressWidthval) * songDuration;
-  playsong();
+  playSong();
 });
