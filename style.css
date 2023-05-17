@@ -72,18 +72,6 @@ header h3 {
   margin: auto;
 }
 
-.animation-cd {
-  animation: imgMusic 15s linear infinite;
-}
-@keyframes imgMusic {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
-}
-
 /* Progress */
 .progress {
   width: 100%;
@@ -133,7 +121,7 @@ header h3 {
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 25px 0 5px 0;
+  margin: 20px 0 5px 0;
 }
 .controls button {
   border: none;
@@ -173,7 +161,7 @@ header h3 {
 
 /* Playlist */
 .playlist {
-  margin-top: 450px;
+  margin-top: 430px;
   padding: 12px;
 }
 
