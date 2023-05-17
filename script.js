@@ -609,6 +609,18 @@ function clicked(index) {
   playSong();
   playSongMusic();
 }
+function scrollToActiveSong() {
+  setTimeout(() => {
+    const activeSong = document.querySelector(".song.active");
+    if (activeSong) {
+      activeSong.scrollIntoView({
+        behavior: "smooth",
+        block: "nearest",
+      });
+    }
+  }, 300);
+}
+
 // Load Music
 function loadMusic(index) {
   musicName.innerText = allMusic[index].name;
@@ -680,6 +692,7 @@ nextBtn.onclick = function () {
   } else {
     nextSong();
   }
+  scrollToActiveSong();
 };
 
 // Prev song
@@ -703,6 +716,7 @@ prevBtn.onclick = function () {
   } else {
     prevSong();
   }
+  scrollToActiveSong();
 };
 
 // Tự động chuyển bài khi kết thúc
@@ -713,6 +727,7 @@ songAudio.addEventListener("ended", () => {
   } else {
     nextSong();
   }
+  scrollToActiveSong();
 });
 
 // -------- Random Music --------
