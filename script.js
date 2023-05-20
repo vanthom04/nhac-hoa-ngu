@@ -539,6 +539,7 @@ const prevBtn = document.querySelector("#btn-prev");
 const nextBtn = document.querySelector("#btn-next");
 const playBtn = document.querySelector("#btn-play");
 const playbackTimeBtn = document.querySelector("#btn-playback-time");
+const playbackTimer = document.querySelector(".playback-timer");
 const songAudio = document.createElement("audio");
 
 let currentIndex = 0;
@@ -547,7 +548,6 @@ let isRandom = false;
 let isRepeat = false;
 let isPlaybackTime = false;
 let stopMusic = null;
-let stopTime = 3600000;
 
 window.addEventListener("load", () => {
   loadMusic(currentIndex);
@@ -609,6 +609,7 @@ function clicked(index) {
   playSong();
   playSongMusic();
 }
+
 function scrollToActiveSong() {
   setTimeout(() => {
     const activeSong = document.querySelector(".song.active");
@@ -673,61 +674,43 @@ function pauseSong() {
 
 // Next song
 function nextSong() {
-  if (currentIndex < allMusic.length - 1) {
+  if (isRandom) {
+    currentIndex = randomSong();
+  } else if (currentIndex < allMusic.length - 1) {
     currentIndex++;
-    loadMusic(currentIndex);
-    playSongMusic();
-    playSong();
   } else {
     currentIndex = 0;
-    loadMusic(currentIndex);
-    playSongMusic();
-    playSong();
   }
+  loadMusic(currentIndex);
+  playSongMusic();
+  playSong();
+  scrollToActiveSong();
 }
 nextBtn.onclick = function () {
-  if (isRandom) {
-    playRandomSong();
-    nextSong();
-  } else {
-    nextSong();
-  }
-  scrollToActiveSong();
+  nextSong();
 };
 
 // Prev song
 function prevSong() {
-  if (currentIndex > 0) {
+  if (isRandom) {
+    currentIndex = randomSong();
+  } else if (currentIndex > 0) {
     currentIndex--;
-    loadMusic(currentIndex);
-    playSongMusic();
-    playSong();
   } else {
     currentIndex = allMusic.length - 1;
-    loadMusic(currentIndex);
-    playSongMusic();
-    playSong();
   }
+  loadMusic(currentIndex);
+  playSongMusic();
+  playSong();
+  scrollToActiveSong();
 }
 prevBtn.onclick = function () {
-  if (isRandom) {
-    playRandomSong();
-    prevSong();
-  } else {
-    prevSong();
-  }
-  scrollToActiveSong();
+  prevSong();
 };
 
 // Tự động chuyển bài khi kết thúc
 songAudio.addEventListener("ended", () => {
-  if (isRandom) {
-    playRandomSong();
-    nextSong();
-  } else {
-    nextSong();
-  }
-  scrollToActiveSong();
+  nextSong();
 });
 
 // -------- Random Music --------
@@ -737,14 +720,10 @@ randomBtn.onclick = function (e) {
 };
 
 let playedSongs = [];
-function playRandomSong() {
-  let randomIndex;
-  let randomSong;
-
-  // Lặp lại cho đến khi tìm được bài hát không trùng lặp
+function randomSong() {
   do {
-    randomIndex = Math.floor(Math.random() * allMusic.length);
-    randomSong = allMusic[randomIndex];
+    var randomIndex = Math.floor(Math.random() * allMusic.length);
+    var randomSong = allMusic[randomIndex];
   } while (playedSongs.includes(randomSong));
 
   // Thêm bài hát được random vào danh sách các bài đã được phát
@@ -754,16 +733,35 @@ function playRandomSong() {
   if (playedSongs.length == allMusic.length) {
     playedSongs = [];
   }
-
-  // Trả về bài hát được random
-  currentIndex = randomIndex;
+  return randomIndex;
 }
 
 // Playback time
 playbackTimeBtn.addEventListener("click", function () {
   if (!isPlaybackTime) {
+    let stopTime = 3600000;
     playbackTimeBtn.classList.add("pink");
+    playbackTimer.style.display = "block";
+    let timerMin = Math.floor(stopTime / 1000 / 60);
+    let timerSec = Math.floor((stopTime / 1000) % 60);
+    if (timerSec < 10) {
+      timerSec = `0${timerSec}`;
+    }
+    playbackTimer.innerText = `${timerMin}:${timerSec}`;
+    setInterval(function () {
+      if (timerSec == 0) {
+        timerSec = 59;
+        timerMin--;
+      }
+      timerSec--;
+      if (timerSec < 10) {
+        timerSec = `0${timerSec}`;
+      }
+      playbackTimer.innerText = `${timerMin}:${timerSec}`;
+    }, 1000);
     stopMusic = setTimeout(function () {
+      playbackTimeBtn.classList.remove("pink");
+      playbackTimer.style.display = "none";
       isPlaybackTime = false;
       pauseSong();
     }, stopTime);
@@ -771,10 +769,12 @@ playbackTimeBtn.addEventListener("click", function () {
   } else {
     clearTimeout(stopMusic);
     playbackTimeBtn.classList.remove("pink");
+    playbackTimer.style.display = "none";
     isPlaybackTime = false;
     playSong();
   }
 });
+console.log(playbackTimer.innerText);
 
 // progress
 songAudio.addEventListener("timeupdate", (e) => {
