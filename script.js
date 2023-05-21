@@ -293,13 +293,13 @@ let allMusic = [
     src: "music/thanh_tru.mp3",
     idMusic: "song42",
   },
-  //   {
-  //     name: "",
-  //     artist: "",
-  //     img: "img/music/.jpg",
-  //     src: "music/.mp3",
-  //     idMusic: "song43",
-  //   },
+  {
+    name: "Kẹo Trăng Sao",
+    artist: "Lê Lâm Thiêm Kiều",
+    img: "img/music/keo_trang_sao.jpg",
+    src: "music/keo_trang_sao.mp3",
+    idMusic: "song43",
+  },
   //   {
   //     name: "",
   //     artist: "",
@@ -548,6 +548,7 @@ let isRandom = false;
 let isRepeat = false;
 let isPlaybackTime = false;
 let stopMusic = null;
+let countdown = null;
 
 window.addEventListener("load", () => {
   loadMusic(currentIndex);
@@ -662,6 +663,7 @@ function playSong() {
   songAudio.play();
   cdThumbAnimation.play();
   isPlaying = true;
+  playBtn.title = "Pause";
   playBtn.innerHTML = '<i class="fa-solid fa-pause"></i>';
 }
 
@@ -669,6 +671,7 @@ function pauseSong() {
   songAudio.pause();
   cdThumbAnimation.pause();
   isPlaying = false;
+  playBtn.title = "Play";
   playBtn.innerHTML = '<i class="fa-solid fa-play"></i>';
 }
 
@@ -744,12 +747,17 @@ playbackTimeBtn.addEventListener("click", function () {
     playbackTimer.style.display = "block";
     let minutes = Math.floor(stopTime / 1000 / 60);
     let seconds = Math.floor((stopTime / 1000) % 60);
+    if (seconds < 10) {
+      seconds = `0${seconds}`;
+    }
+    playbackTimer.innerText = `${minutes}:${seconds}`;
     countdown = setInterval(function () {
       if (seconds == 0) {
         seconds = 59;
         minutes--;
+      } else {
+        seconds--;
       }
-      seconds--;
       if (seconds < 10) {
         seconds = `0${seconds}`;
       }
