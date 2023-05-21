@@ -787,12 +787,6 @@ function isMobileDevice() {
   );
 }
 
-// Sử dụng hàm kiểm tra
-if (isMobileDevice()) {
-  playbackTimer.style.right = 45 + "px";
-  playbackTimer.style.bottom = 10 + "px";
-}
-
 // progress
 songAudio.addEventListener("timeupdate", (e) => {
   const currentTime = e.target.currentTime;
