@@ -737,9 +737,9 @@ function randomSong() {
 }
 
 // Playback time
+let stopTime = 3600000;
 playbackTimeBtn.addEventListener("click", function () {
   if (!isPlaybackTime) {
-    let stopTime = 3600000;
     playbackTimeBtn.classList.add("pink");
     playbackTimer.style.display = "block";
     let minutes = Math.floor(stopTime / 1000 / 60);
