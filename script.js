@@ -555,7 +555,7 @@ window.addEventListener("load", () => {
   playSongMusic();
 });
 
-// Xử lý khi click vào playlist
+// Playlist
 for (let i = 0; i < allMusic.length; i++) {
   let song = `<div class="song" musicIndex="${i}">
                 <div class="left">
@@ -725,8 +725,8 @@ randomBtn.onclick = function (e) {
 let playedSongs = [];
 function randomSong() {
   do {
-    var randomIndex = Math.floor(Math.random() * allMusic.length);
-    var randomSong = allMusic[randomIndex];
+    let randomIndex = Math.floor(Math.random() * allMusic.length);
+    let randomSong = allMusic[randomIndex];
   } while (playedSongs.includes(randomSong));
 
   // Thêm bài hát được random vào danh sách các bài đã được phát
@@ -739,12 +739,31 @@ function randomSong() {
   return randomIndex;
 }
 
+// Lấy tham chiếu đến phần tử bảng chọn
+let dropdownMenu = document.querySelector(".dropdown-menu");
+let dropdownOptions = document.querySelectorAll(".dropdown-menu li");
+
+// playbackTimeBtn.addEventListener("click", function () {
+//   dropdownMenu.classList.toggle("show");
+// });
+
+// dropdownOptions.forEach(function (option) {
+//   option.addEventListener("click", function () {
+//     let selectedValue = option.getAttribute("data-value");
+//     console.log("Đã chọn: ", selectedValue);
+//     dropdownOptions.addEventListener("click", function () {
+//       dropdownMenu.classList.remove("show");
+//       playbackTime(selectedValue);
+//     });
+//     // Gọi function hoặc thực hiện các thao tác khác ở đây
+//   });
+// });
 // Playback time
 let stopTime = 3600;
-playbackTimeBtn.addEventListener("click", function () {
+function playbackTime() {
   if (!isPlaybackTime) {
     playbackTimeBtn.classList.add("pink");
-    playbackTimer.style.display = "block";
+    playbackTimer.classList.add("show");
     // CountDown
     let minutes = Math.floor(stopTime / 60);
     let seconds = Math.floor(stopTime % 60);
@@ -767,7 +786,7 @@ playbackTimeBtn.addEventListener("click", function () {
     // Stop Music
     stopMusic = setTimeout(function () {
       playbackTimeBtn.classList.remove("pink");
-      playbackTimer.style.display = "none";
+      playbackTimer.classList.remove("show");
       clearInterval(countdown);
       isPlaybackTime = false;
       pauseSong();
@@ -777,11 +796,14 @@ playbackTimeBtn.addEventListener("click", function () {
     clearTimeout(stopMusic);
     clearInterval(countdown);
     playbackTimeBtn.classList.remove("pink");
-    playbackTimer.style.display = "none";
+    playbackTimer.classList.remove("show");
     isPlaybackTime = false;
   }
-});
+}
 
+playbackTimeBtn.addEventListener("click", function () {
+  playbackTime();
+});
 // progress
 songAudio.addEventListener("timeupdate", (e) => {
   const currentTime = e.target.currentTime;
