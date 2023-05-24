@@ -728,6 +728,7 @@ myControlBtn.addEventListener("click", function () {
     !myControls.classList.contains("pink")
   ) {
     isRandom = !isRandom;
+    myControlBtn.title = "Repeat";
     myControls.classList.add("pink");
   } else if (
     myControls.classList.contains("fa-shuffle") &&
@@ -735,6 +736,7 @@ myControlBtn.addEventListener("click", function () {
   ) {
     isRandom = !isRandom;
     isRepeat = !isRepeat;
+    myControlBtn.title = "Random";
     myControls.classList.remove("fa-shuffle");
     myControls.classList.add("fa-repeat");
   } else {
