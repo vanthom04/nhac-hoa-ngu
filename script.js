@@ -534,7 +534,8 @@ const musicName = document.querySelector("header h2");
 const musicArtist = document.querySelector("header h3");
 const progress = document.querySelector(".progress");
 const progressbar = document.querySelector(".progress-bar");
-const randomBtn = document.querySelector("#btn-random");
+const myControlBtn = document.querySelector("#btn-my-controls");
+const myControls = document.querySelector("#btn-my-controls #icon");
 const prevBtn = document.querySelector("#btn-prev");
 const nextBtn = document.querySelector("#btn-next");
 const playBtn = document.querySelector("#btn-play");
@@ -713,20 +714,44 @@ prevBtn.onclick = function () {
 
 // Tự động chuyển bài khi kết thúc
 songAudio.addEventListener("ended", () => {
-  nextSong();
+  if (isRepeat) {
+    songAudio.play();
+  } else {
+    nextSong();
+  }
 });
 
-// -------- Random Music --------
-randomBtn.onclick = function (e) {
-  isRandom = !isRandom;
-  randomBtn.classList.toggle("pink", isRandom);
-};
+// Random & Repeat
+myControlBtn.addEventListener("click", function () {
+  if (
+    myControls.classList.contains("fa-shuffle") &&
+    !myControls.classList.contains("pink")
+  ) {
+    isRandom = !isRandom;
+    myControls.classList.add("pink");
+  } else if (
+    myControls.classList.contains("fa-shuffle") &&
+    myControls.classList.contains("pink")
+  ) {
+    isRandom = !isRandom;
+    isRepeat = !isRepeat;
+    myControls.classList.remove("fa-shuffle");
+    myControls.classList.add("fa-repeat");
+  } else {
+    isRepeat = !isRepeat;
+    myControls.classList.add("fa-shuffle");
+    myControls.classList.remove("fa-repeat");
+    myControls.classList.remove("pink");
+  }
+});
 
 let playedSongs = [];
 function randomSong() {
+  let randomIndex;
+  let randomSong;
   do {
-    let randomIndex = Math.floor(Math.random() * allMusic.length);
-    let randomSong = allMusic[randomIndex];
+    randomIndex = Math.floor(Math.random() * allMusic.length);
+    randomSong = allMusic[randomIndex];
   } while (playedSongs.includes(randomSong));
 
   // Thêm bài hát được random vào danh sách các bài đã được phát
@@ -740,8 +765,8 @@ function randomSong() {
 }
 
 // Lấy tham chiếu đến phần tử bảng chọn
-let dropdownMenu = document.querySelector(".dropdown-menu");
-let dropdownOptions = document.querySelectorAll(".dropdown-menu li");
+// let dropdownMenu = document.querySelector(".dropdown-menu");
+// let dropdownOptions = document.querySelectorAll(".dropdown-menu li");
 
 // playbackTimeBtn.addEventListener("click", function () {
 //   dropdownMenu.classList.toggle("show");
@@ -758,6 +783,7 @@ let dropdownOptions = document.querySelectorAll(".dropdown-menu li");
 //     // Gọi function hoặc thực hiện các thao tác khác ở đây
 //   });
 // });
+
 // Playback time
 let stopTime = 3600;
 function playbackTime() {
